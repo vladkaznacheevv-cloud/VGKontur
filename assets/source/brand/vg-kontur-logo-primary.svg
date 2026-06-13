@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">VG Kontur primary logo</title>
+  <desc id="desc">VG monogram inside a thin room-plan contour.</desc>
+  <g fill="none" stroke-linecap="square" stroke-linejoin="miter">
+    <path d="M18 18h92v92H18V18Z" stroke="#2f6f52" stroke-width="4"/>
+    <path d="M18 54h24M86 18v26M110 74H86v36" stroke="#9fb8a8" stroke-width="2"/>
+    <path d="M32 40l19 49 19-49" stroke="#2c302d" stroke-width="8"/>
+    <path d="M96 40H78L64 54v20l14 14h20V66H82" stroke="#2c302d" stroke-width="8"/>
+    <path d="M52 18v12M18 88h12M98 98h12" stroke="#2f6f52" stroke-width="4"/>
+  </g>
+</svg>

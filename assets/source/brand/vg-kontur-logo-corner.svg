@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">VG Kontur corner logo</title>
+  <desc id="desc">VG monogram built into a precise 90 degree construction corner.</desc>
+  <g fill="none" stroke-linecap="square" stroke-linejoin="miter">
+    <path d="M24 24v80h80" stroke="#2f6f52" stroke-width="6"/>
+    <path d="M24 52h18M52 104V86M78 24h26v26" stroke="#9fb8a8" stroke-width="2"/>
+    <path d="M39 38l18 48 18-48" stroke="#2c302d" stroke-width="8"/>
+    <path d="M100 38H83L70 51v20l13 13h17V64H86" stroke="#2c302d" stroke-width="8"/>
+    <path d="M24 24h18M86 104h18" stroke="#2f6f52" stroke-width="6"/>
+  </g>
+</svg>
