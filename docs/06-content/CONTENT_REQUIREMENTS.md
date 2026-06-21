@@ -109,6 +109,6 @@ Use:
 
 Required text under every form:
 
-> Нажимая кнопку, вы соглашаетесь с обработкой персональных данных.
+> Нажимая кнопку, вы соглашаетесь с обработкой персональных данных и Политикой конфиденциальности.
 
-If the form is present, link legal/privacy copy to `/privacy`.
+The words «Политикой конфиденциальности» must link to `/privacy`.

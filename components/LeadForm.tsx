@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useMemo, useState } from "react";
+import Link from "next/link";
 import { ArrowRight, Download, Send } from "lucide-react";
 import {
   calculateEstimate,
@@ -272,7 +273,8 @@ export function LeadForm({ variant }: LeadFormProps) {
             {isCalculator ? <ArrowRight size={18} aria-hidden="true" /> : <Send size={18} aria-hidden="true" />}
           </button>
           <p className="form-consent">
-            Нажимая кнопку, вы соглашаетесь с обработкой персональных данных.
+            Нажимая кнопку, вы соглашаетесь с обработкой персональных данных и{" "}
+            <Link href="/privacy">Политикой конфиденциальности</Link>.
           </p>
         </div>
 

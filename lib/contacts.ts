@@ -11,3 +11,17 @@ export const PROJECT_NAME = "VG Контур";
 export const PROJECT_HEADER_NAME = "VG КОНТУР";
 export const PROJECT_DESCRIPTOR = "Ремонт и отделка по КМВ";
 export const PROJECT_SLOGAN = "Ремонт без хаоса: замер, смета, контроль";
+
+export const SITE_URL = "https://vgkontur.ru";
+export const CONTACT_EMAIL = "vlad.kaznacheevv@gmail.com";
+
+// Публичные регистрационные данные оператора ПДн (не секрет, не PII клиентов).
+// Используются на странице /privacy как единый источник.
+export const PERSONAL_DATA_OPERATOR = {
+  legalForm: "Индивидуальный предприниматель",
+  fullName: "Казначеев Владислав Сергеевич",
+  inn: "262610640023",
+  ogrnip: "324265100007638",
+  region: "Ставропольский край, г. Ессентуки",
+  responsiblePerson: "Казначеев Владислав Сергеевич"
+} as const;

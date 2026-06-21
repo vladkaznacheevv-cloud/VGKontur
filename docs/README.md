@@ -93,4 +93,5 @@ Current decision:
 
 ## Requires Agreement Before Stage 4
 
-- `/privacy` page content.
+- `/privacy` page content and personal-data operator details are finalized (single source in `lib/contacts.ts`; mirrored in `docs/09-technical/PRODUCTION_OPERATIONS.md`).
+- Remaining legal action outside code: verify whether a Roskomnadzor notification / personal-data operator registry entry is required before large-scale ad traffic.

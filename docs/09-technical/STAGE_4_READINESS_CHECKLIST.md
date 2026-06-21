@@ -62,9 +62,9 @@
 - City map points must stay city-level only, without exact addresses.
 - Pricing block is deferred until real prices are collected and stabilized.
 - A `/privacy` page is required if forms are present.
-- Under every form, show:
+- Under every form, show (the words «Политикой конфиденциальности» link to `/privacy`):
 
-> Нажимая кнопку, вы соглашаетесь с обработкой персональных данных.
+> Нажимая кнопку, вы соглашаетесь с обработкой персональных данных и Политикой конфиденциальности.
 
 ## Batch 2 Visual Assets
 

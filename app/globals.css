@@ -639,6 +639,12 @@ h3 {
   font-size: var(--fs-label);
 }
 
+.form-consent a {
+  color: var(--blue);
+  font-weight: 700;
+  text-decoration: underline;
+}
+
 .form-status {
   min-height: 1.4em;
   margin: 0;
@@ -1168,6 +1174,21 @@ h3 {
 .privacy-shell section {
   padding-top: 18px;
   border-top: 1px solid var(--line);
+}
+
+.privacy-shell ul {
+  margin: 12px 0 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+}
+
+.privacy-shell p a,
+.privacy-shell li a {
+  color: var(--blue);
+  font-weight: 700;
+  text-decoration: underline;
 }
 
 .back-link {

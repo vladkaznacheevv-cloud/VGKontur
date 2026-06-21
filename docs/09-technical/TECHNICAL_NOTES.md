@@ -103,9 +103,9 @@ Do not fill these placeholders with real values in repository files.
 
 - Create a `/privacy` page if forms are present.
 - Link to `/privacy` from the footer and near form consent where appropriate.
-- Under every form, show this consent text:
+- Under every form, show this consent text (the words «Политикой конфиденциальности» link to `/privacy`):
 
-> Нажимая кнопку, вы соглашаетесь с обработкой персональных данных.
+> Нажимая кнопку, вы соглашаетесь с обработкой персональных данных и Политикой конфиденциальности.
 
 ## Analytics
 
