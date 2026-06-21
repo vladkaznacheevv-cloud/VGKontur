@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { isHoneypotFilled, normalizeLead, type LeadPayload } from "@/lib/leadValidation";
 import { sendLeadToTelegram } from "@/lib/telegram";
+import { saveLeadRecord, updateLeadDeliveryStatus } from "@/lib/leadStorage";
 
 export const runtime = "nodejs";
 
@@ -51,9 +52,15 @@ export async function POST(request: Request) {
 
   try {
     const lead = normalizeLead(payload);
+
+    // Сохраняем валидированную заявку локально ДО отправки в Telegram,
+    // чтобы временный сбой Telegram/API не приводил к потере заявки.
+    const { id } = await saveLeadRecord(lead);
+
     const result = await sendLeadToTelegram(lead);
 
     if (result.reason === "missing_config") {
+      await updateLeadDeliveryStatus(id, "failed", "missing_config");
       return NextResponse.json(
         {
           ok: false,
@@ -64,6 +71,7 @@ export async function POST(request: Request) {
     }
 
     if (!result.ok) {
+      await updateLeadDeliveryStatus(id, "failed", result.reason);
       return NextResponse.json(
         {
           ok: false,
@@ -72,6 +80,8 @@ export async function POST(request: Request) {
         { status: 502 }
       );
     }
+
+    await updateLeadDeliveryStatus(id, "sent");
 
     return NextResponse.json({
       ok: true,

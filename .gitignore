@@ -11,3 +11,6 @@ yarn-error.log*
 pnpm-debug.log*
 
 .tmp/
+
+# Локальное хранилище заявок (содержит PII) — не коммитить
+/storage/
