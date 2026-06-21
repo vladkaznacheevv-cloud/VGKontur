@@ -36,6 +36,7 @@ import serviceMasonryImage from "@/assets/optimized/service-masonry-v01.webp";
 import serviceRoofingImage from "@/assets/optimized/service-roofing-v01.webp";
 import { BrandLogo } from "@/components/BrandLogo";
 import { LeadForm } from "@/components/LeadForm";
+import { StructuredData } from "@/components/StructuredData";
 import { TrackedLink } from "@/components/TrackedLink";
 import { WorksGallery } from "@/components/WorksGallery";
 import { YandexServiceMap } from "@/components/YandexServiceMap";
@@ -177,6 +178,7 @@ const yandexMapsApiKey = process.env.NEXT_PUBLIC_YANDEX_MAPS_API_KEY;
 export default function HomePage() {
   return (
     <main>
+      <StructuredData />
       <header className="site-header">
         <a className="brand" href="#top" aria-label={`${PROJECT_NAME}, перейти к началу`}>
           <span className="brand-mark" aria-hidden="true">

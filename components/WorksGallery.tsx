@@ -188,8 +188,6 @@ export function WorksGallery() {
         ))}
       </ul>
 
-      <p className="works-note">Точные адреса объектов не публикуем.</p>
-
       {category && photo ? (
         <div
           className="works-lightbox"

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import {
   CONTACT_EMAIL,
@@ -8,9 +9,12 @@ import {
   SITE_URL
 } from "@/lib/contacts";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Политика обработки персональных данных | VG Контур",
-  description: "Политика обработки персональных данных для заявок на ремонт и отделочные работы."
+  description: "Политика обработки персональных данных для заявок на ремонт и отделочные работы.",
+  alternates: {
+    canonical: "/privacy"
+  }
 };
 
 const operatorName = `${PERSONAL_DATA_OPERATOR.legalForm} ${PERSONAL_DATA_OPERATOR.fullName}`;
