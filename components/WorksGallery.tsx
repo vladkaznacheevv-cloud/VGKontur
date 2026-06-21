@@ -188,10 +188,7 @@ export function WorksGallery() {
         ))}
       </ul>
 
-      <p className="works-note">
-        Реальные фотографии с объектов нашей команды по разным направлениям. Точные адреса
-        объектов не публикуем.
-      </p>
+      <p className="works-note">Точные адреса объектов не публикуем.</p>
 
       {category && photo ? (
         <div

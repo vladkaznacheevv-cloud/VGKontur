@@ -1197,6 +1197,62 @@ h3 {
   font-weight: 800;
 }
 
+/* Responsive copy helper: extended desktop text, hidden on mobile (kept in DOM for SEO). */
+.dt-only {
+  display: inline;
+}
+
+/* Compact bottom CTA bar — mobile only, shown via the max-width media query below. */
+.mobile-cta-bar {
+  display: none;
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 30;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--line);
+  background: oklch(98% 0.01 85 / 96%);
+  box-shadow: 0 -8px 24px oklch(26% 0.03 70 / 12%);
+  backdrop-filter: blur(12px);
+}
+
+.mobile-cta {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-height: 50px;
+  padding: 6px 4px;
+  border-radius: var(--radius);
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.mobile-cta svg {
+  flex: 0 0 auto;
+}
+
+.mobile-cta-call {
+  background: var(--green);
+  color: oklch(98% 0.01 85);
+}
+
+.mobile-cta-wa {
+  border: 1px solid var(--line);
+  background: var(--bg-plain);
+  color: var(--green-strong);
+}
+
+.mobile-cta-measure {
+  border: 1px solid var(--line);
+  background: var(--bg-plain);
+  color: var(--blue);
+}
+
 @media (min-width: 700px) {
   .site-header {
     grid-template-columns: minmax(190px, auto) 1fr;
@@ -1351,6 +1407,13 @@ h3 {
     display: none;
   }
 
+  /* Header stops following the scroll on mobile so it never overlaps content;
+     the compact bottom CTA bar keeps key actions reachable instead. */
+  .site-header {
+    position: static;
+    top: auto;
+  }
+
   .header-actions {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1362,6 +1425,52 @@ h3 {
 
   .header-actions .button {
     width: 100%;
+  }
+
+  /* Hide the extended desktop-only copy tails. */
+  .dt-only {
+    display: none;
+  }
+
+  /* Denser process steps: 8 items in two compact columns instead of a long list. */
+  .process-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .process-step {
+    padding: 13px;
+  }
+
+  .process-step-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .process-step-num {
+    top: 11px;
+    right: 12px;
+  }
+
+  /* Denser works gallery on mobile. */
+  .works-cats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  /* Decorative calculator image adds length without info on mobile. */
+  .calculator-image {
+    display: none;
+  }
+
+  /* Show the compact bottom CTA bar and reserve space so it never covers the footer.
+     Scoped to pages that actually render the bar (home), so /privacy keeps no dead space. */
+  .mobile-cta-bar {
+    display: grid;
+  }
+
+  body:has(.mobile-cta-bar) {
+    padding-bottom: calc(74px + env(safe-area-inset-bottom, 0px));
   }
 }
 
