@@ -13,7 +13,7 @@ This folder contains the working documentation for the KMV construction and reno
 - `06-content/` - copy rules, offers, CTA and section content requirements.
 - `07-seo-geo/` - Essentuki-first SEO/GEO strategy and future KMV rollout logic.
 - `08-image-generation/` - GPT Images workflow, asset plan and image prompts.
-- `09-technical/` - future stack notes, Telegram integration notes and implementation constraints.
+- `09-technical/` - future stack notes, Telegram integration notes, implementation constraints and production operations runbook.
 - `archive/legacy/` - old package indexes, outdated plans and historical materials kept for traceability.
 
 ## Current Sources Of Truth
@@ -26,6 +26,7 @@ This folder contains the working documentation for the KMV construction and reno
 - SEO/GEO: `07-seo-geo/SEO_GEO_SOURCE_OF_TRUTH.md`.
 - Image workflow: `08-image-generation/IMAGE_GENERATION_WORKFLOW.md`.
 - Technical notes: `09-technical/TECHNICAL_NOTES.md`.
+- Production operations (domain, deploy, lead storage, security): `09-technical/PRODUCTION_OPERATIONS.md`.
 
 ## Approved Design Reference
 

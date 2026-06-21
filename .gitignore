@@ -3,7 +3,8 @@ node_modules/
 out/
 
 .env
-.env*.local
+.env.*
+!.env.example
 
 npm-debug.log*
 yarn-debug.log*
@@ -12,5 +13,7 @@ pnpm-debug.log*
 
 .tmp/
 
-# Локальное хранилище заявок (содержит PII) — не коммитить
+# Локальное хранилище заявок + бэкапы/CSV-экспорты (содержат PII) — не коммитить
 /storage/
+
+tsconfig.tsbuildinfo
