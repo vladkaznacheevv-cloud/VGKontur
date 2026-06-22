@@ -50,7 +50,7 @@ function FallbackMap() {
         width={contactsFallbackImage.width}
         height={contactsFallbackImage.height}
         sizes="(min-width: 980px) 58vw, 100vw"
-        loading="eager"
+        loading="lazy"
         aria-hidden="true"
       />
       <span className="map-ring map-ring-main" />
@@ -74,13 +74,47 @@ function FallbackMap() {
 }
 
 export function YandexServiceMap({ apiKey }: YandexServiceMapProps) {
+  const wrapRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<{ destroy: () => void } | null>(null);
   const [isMapReady, setIsMapReady] = useState(false);
   const [hasMapError, setHasMapError] = useState(false);
+  const [shouldLoad, setShouldLoad] = useState(false);
+
+  // Не грузим тяжёлый Яндекс.Карты API на первом экране: подключаем скрипт
+  // только когда блок контактов приближается к вьюпорту. До этого виден
+  // styled-fallback. Так карта не конкурирует за трафик/CPU при первой отрисовке.
+  useEffect(() => {
+    if (!apiKey) {
+      return;
+    }
+
+    const node = wrapRef.current;
+    if (!node) {
+      return;
+    }
+
+    if (typeof IntersectionObserver === "undefined") {
+      setShouldLoad(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setShouldLoad(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "300px" }
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [apiKey]);
 
   useEffect(() => {
-    if (!apiKey || !mapRef.current) {
+    if (!apiKey || !shouldLoad || !mapRef.current) {
       return;
     }
 
@@ -147,14 +181,14 @@ export function YandexServiceMap({ apiKey }: YandexServiceMapProps) {
       mapInstanceRef.current?.destroy();
       mapInstanceRef.current = null;
     };
-  }, [apiKey]);
+  }, [apiKey, shouldLoad]);
 
   if (!apiKey || hasMapError) {
     return <FallbackMap />;
   }
 
   return (
-    <div className="yandex-map-wrap">
+    <div className="yandex-map-wrap" ref={wrapRef}>
       {!isMapReady ? <FallbackMap /> : null}
       <div
         className="yandex-map"

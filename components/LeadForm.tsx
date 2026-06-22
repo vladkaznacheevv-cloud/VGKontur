@@ -171,7 +171,7 @@ export function LeadForm({ variant }: LeadFormProps) {
   return (
     <>
       <form className={formClassName} onSubmit={handleSubmit} noValidate>
-        <input className="form-hp" name="website" tabIndex={-1} autoComplete="off" />
+        <input className="form-hp" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" />
 
         {isCalculator ? (
           <>
