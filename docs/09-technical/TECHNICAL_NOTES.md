@@ -79,8 +79,8 @@ Do not fill these placeholders with real values in repository files.
 - MVP must not show exact final prices as a promise.
 - Use wording around "расчёт после замера".
 - The calculator may provide only a "предварительная оценка по площади и типу работ".
-- Calculator may show a preliminary range using a temporary rate table.
-- The temporary rate table must be marked with `TODO: уточнить по Ставропольскому краю.`
+- Calculator shows a preliminary range using VG Контур working rates.
+- Rates are working rates for a preliminary estimate; the final estimate is formed after measurement.
 - Formula: area x rate range by repair type.
 - The on-page result must include object type, area, city, repair type, preliminary range, approximate timeline if safely calculated and disclaimer.
 - The preliminary estimate should be printable/saveable through browser print or a lightweight printable section, without heavy PDF libraries.

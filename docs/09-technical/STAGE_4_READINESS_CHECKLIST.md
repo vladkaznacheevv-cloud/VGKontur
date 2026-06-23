@@ -52,7 +52,7 @@
   - "расчёт после замера";
   - "предварительная оценка по площади и типу работ";
   - "финальная смета зависит от состояния объекта, материалов и объёма работ".
-- Calculator may show preliminary ranges from a temporary MVP rate table, marked with `TODO: уточнить по Ставропольскому краю.`
+- Calculator shows preliminary ranges from VG Контур working rates; the final estimate is formed after measurement.
 - Calculator output must not be presented as a final price or legal estimate.
 - Preliminary estimate download/save can use browser print or a lightweight printable section.
 - Calculator Telegram notification title: `🧾 Отправлена новая предварительная смета`.

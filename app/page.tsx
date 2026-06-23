@@ -385,8 +385,8 @@ export default function HomePage() {
           <div className="estimate-note">
             <ClipboardCheck size={22} aria-hidden="true" />
             <span>
-              Стоимость предварительная. Точная смета составляется после замера и зависит
-              от состояния объекта, материалов и объёма работ.
+              Расчёт предварительный и показывает ориентир по стоимости работ. Материалы,
+              сантехника, электрика, демонтаж, состояние стен и пола уточняются после замера.
             </span>
           </div>
           <div className="calculator-image" aria-hidden="true">

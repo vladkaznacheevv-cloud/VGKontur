@@ -83,10 +83,10 @@ Use these formulations in calculator, pricing-adjacent blocks and form copy:
 MVP rules:
 
 - Do not show exact final prices as a promise.
-- Calculator output may show a preliminary cost range from a temporary MVP rate table.
-- Mark the temporary rates with `TODO: уточнить по Ставропольскому краю.`
+- Calculator output shows a preliminary cost range from VG Контур working rates.
+- Rates are working rates for a preliminary estimate; the final estimate is formed after measurement.
 - Do not imply that calculator output is a final estimate.
-- Pricing block should be improved later, after real prices are collected and stabilized.
+- Pricing block can be refined later as needed; current rates are working rates for preliminary estimates.
 
 ## Works Section Copy
 

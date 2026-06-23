@@ -1,11 +1,4 @@
 import type { NormalizedLead } from "./leadValidation";
-import {
-  calculateEstimate,
-  formatDateTime,
-  formatDurationRange,
-  formatEstimateRange,
-  formatRateRange
-} from "./estimate";
 
 function escapeHtml(value: string) {
   return value
@@ -20,18 +13,6 @@ export function formatTelegramMessage(lead: NormalizedLead) {
     lead.kind === "calculator"
       ? "🧾 Отправлена новая предварительная смета"
       : "Новая заявка на замер";
-  const estimate =
-    lead.kind === "calculator" && lead.objectType && lead.area && lead.repairType
-      ? calculateEstimate({
-          objectType: lead.objectType,
-          area: lead.area,
-          city: lead.city,
-          repairType: lead.repairType,
-          name: lead.name,
-          phone: lead.phone,
-          comment: lead.comment
-        })
-      : null;
 
   const lines = [
     `<b>${title}</b>`,
@@ -52,17 +33,12 @@ export function formatTelegramMessage(lead: NormalizedLead) {
 
   lines.push(`<b>Тип работ:</b> ${escapeHtml(lead.workType)}`);
 
+  // Единый источник цифр: для заявок из калькулятора ориентир по бюджету
+  // (с учётом состояния объекта) формируется на клиенте через lib/estimate.ts
+  // и передаётся в комментарии. Здесь сумму не пересчитываем, чтобы значения
+  // в Telegram не конфликтовали с калькулятором и печатной/PDF-сметой.
   if (lead.comment) {
     lines.push(`<b>Комментарий:</b> ${escapeHtml(lead.comment)}`);
-  }
-
-  if (estimate) {
-    lines.push("");
-    lines.push(`<b>Предварительная стоимость:</b> ${escapeHtml(formatEstimateRange(estimate))}`);
-    lines.push(`<b>Временная ставка:</b> ${escapeHtml(formatRateRange(estimate))}`);
-    lines.push(`<b>Примерный срок:</b> ${escapeHtml(formatDurationRange(estimate))}`);
-    lines.push(`<b>Дата расчёта:</b> ${escapeHtml(formatDateTime(estimate.calculatedAt))}`);
-    lines.push(`<b>Дисклеймер:</b> ${escapeHtml(estimate.disclaimer)}`);
   }
 
   lines.push("");

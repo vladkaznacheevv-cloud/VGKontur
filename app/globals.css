@@ -656,84 +656,423 @@ h3 {
   color: var(--danger);
 }
 
-.estimate-result {
+/* ───────── Интерактивный калькулятор ───────── */
+.calc-widget {
+  display: grid;
+  gap: 18px;
+}
+
+.calc-controls {
   display: grid;
   gap: 16px;
-  border: 1px solid oklch(78% 0.03 78);
-  border-radius: var(--radius);
-  background: oklch(98% 0.01 85);
   padding: 18px;
-  box-shadow: 0 12px 32px oklch(26% 0.03 70 / 8%);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-plain);
 }
 
-.calculator .estimate-result {
-  grid-column: 1 / -1;
+/* Visually hidden helpers shared by screen/print variants. */
+.print-only {
+  display: none;
 }
 
-.estimate-result-header {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 18px;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--line);
-  padding-bottom: 12px;
-}
-
-.estimate-result-header h3,
-.estimate-result-header p {
+.segmented {
+  display: grid;
+  gap: 10px;
   margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
 }
 
-.estimate-result-header > p {
+.segmented-legend {
+  padding: 0;
   color: var(--muted);
   font-size: var(--fs-caption);
   font-weight: 700;
 }
 
-.estimate-details {
+.segmented-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.segmented-options-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.segmented-option {
+  position: relative;
+  display: flex;
+  min-width: 0;
+}
+
+.segmented-option input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.segmented-option span {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: oklch(99% 0.006 85);
+  color: var(--text);
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  overflow-wrap: anywhere;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+.segmented-option input:hover + span {
+  border-color: oklch(70% 0.046 145);
+}
+
+.segmented-option input:checked + span {
+  border-color: var(--green);
+  background: var(--surface-green);
+  color: var(--green-strong);
+  box-shadow: inset 0 0 0 1px var(--green);
+}
+
+.segmented-option input:focus-visible + span {
+  outline: 3px solid oklch(68% 0.11 145 / 70%);
+  outline-offset: 2px;
+}
+
+.calc-area {
   display: grid;
   gap: 10px;
+}
+
+.calc-area-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.calc-area-head label {
+  color: var(--muted);
+  font-size: var(--fs-caption);
+  font-weight: 700;
+}
+
+.calc-area-input {
+  width: 116px;
+  min-height: 46px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: oklch(99% 0.006 85);
+  color: var(--text);
+  padding: 10px 12px;
+  font-weight: 750;
+  text-align: right;
+}
+
+.calc-area-slider {
+  width: 100%;
+  accent-color: var(--green);
+  cursor: pointer;
+}
+
+.calc-area-slider:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.calc-hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--fs-label);
+}
+
+/* ───────── Печатная / PDF A4-смета ───────── */
+.estimate-sheet {
+  display: grid;
+  gap: 16px;
+  border: 1px solid oklch(80% 0.022 78);
+  border-radius: var(--radius);
+  background: oklch(99% 0.006 85);
+  padding: 22px;
+  box-shadow: 0 14px 36px oklch(26% 0.03 70 / 9%);
+}
+
+.estimate-sheet-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+  align-items: flex-start;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--green);
+  padding-bottom: 14px;
+}
+
+.estimate-sheet-brand {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.estimate-sheet-mark {
+  display: grid;
+  width: 46px;
+  height: 46px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: var(--radius);
+  background: var(--surface-green);
+  color: var(--green);
+}
+
+.estimate-sheet-brand-text {
+  display: grid;
+  gap: 2px;
+}
+
+.estimate-sheet-brand-text strong {
+  font-size: 1.1rem;
+  letter-spacing: 0.01em;
+}
+
+.estimate-sheet-brand-text small {
+  color: var(--muted);
+  font-size: var(--fs-label);
+}
+
+.estimate-sheet-contacts {
+  display: grid;
+  gap: 3px;
+  text-align: right;
+  font-size: var(--fs-caption);
+  min-width: 0;
+}
+
+.estimate-sheet-contacts a {
+  color: var(--text);
+  font-weight: 750;
+  overflow-wrap: anywhere;
+}
+
+.estimate-sheet-contacts a:first-child {
+  color: var(--green-strong);
+}
+
+.estimate-sheet-channels {
+  color: var(--muted);
+  font-size: var(--fs-label);
+  overflow-wrap: anywhere;
+}
+
+.estimate-sheet-title {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.estimate-sheet-eyebrow {
+  margin: 0;
+  color: var(--text);
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.estimate-sheet-date {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--fs-caption);
+  font-weight: 700;
+}
+
+.estimate-headline {
+  display: grid;
+  gap: 5px;
+  border: 1px solid oklch(75% 0.035 145);
+  border-radius: var(--radius);
+  background: var(--surface-green);
+  padding: 16px 18px;
+}
+
+.estimate-headline-label {
+  color: var(--green-strong);
+  font-size: var(--fs-label);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.estimate-headline-value {
+  color: var(--green-strong);
+  font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.05rem);
+  font-weight: 850;
+  line-height: 1.1;
+}
+
+.estimate-headline-meta {
+  color: var(--green-strong);
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  opacity: 0.92;
+}
+
+.estimate-params {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 16px;
   margin: 0;
 }
 
-.estimate-details div {
+.estimate-params div {
   display: grid;
   gap: 2px;
   border-bottom: 1px solid oklch(90% 0.014 78);
-  padding-bottom: 9px;
+  padding-bottom: 8px;
+  min-width: 0;
 }
 
-.estimate-details dt {
+.estimate-params dt {
   color: var(--muted);
   font-size: var(--fs-label);
   font-weight: 800;
 }
 
-.estimate-details dd {
+.estimate-params dd {
   margin: 0;
   color: var(--text);
   font-weight: 750;
   overflow-wrap: anywhere;
 }
 
-.estimate-disclaimer,
-.estimate-rate-note {
+.estimate-influence {
   margin: 0;
+  color: var(--muted);
+  font-size: var(--fs-caption);
+  line-height: 1.5;
+}
+
+.estimate-influence strong {
+  color: var(--text);
+}
+
+.estimate-cta-note {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-plain);
+  color: var(--text);
+  font-weight: 700;
+}
+
+.estimate-cta-note svg {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  color: var(--green);
+}
+
+.estimate-sheet-disclaimer {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--fs-label);
+  line-height: 1.5;
+}
+
+.estimate-sheet-foot {
+  display: grid;
+  gap: 2px;
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+  color: var(--muted);
+  font-size: var(--fs-label);
+  overflow-wrap: anywhere;
+}
+
+.estimate-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.estimate-actions .button {
+  width: 100%;
+}
+
+.button-ghost {
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--text);
+}
+
+.button-ghost:hover {
+  border-color: var(--green);
+  color: var(--green-strong);
+}
+
+/* ───────── Продающий блок + отправка расчёта ───────── */
+.calc-next {
+  display: grid;
+  gap: 10px;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-plain);
+}
+
+.calc-next-title {
+  margin: 0;
+  font-weight: 800;
+}
+
+.calc-next-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: var(--fs-caption);
+  line-height: 1.45;
+}
+
+.calc-send-lead {
+  margin: 0 0 2px;
   color: var(--muted);
   font-size: var(--fs-caption);
 }
 
-.estimate-disclaimer {
-  border: 1px solid oklch(75% 0.035 145);
-  border-radius: var(--radius);
-  background: var(--surface-green);
-  color: var(--green-strong);
-  padding: 12px;
-  font-weight: 750;
+.calc-send-secondary {
+  display: flex;
+  justify-content: center;
 }
 
-.estimate-print-button {
-  width: 100%;
+.calc-call-link {
+  display: inline-flex;
+  gap: 7px;
+  align-items: center;
+  color: var(--blue);
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  text-decoration: underline;
 }
 
 .works {
@@ -1294,14 +1633,6 @@ h3 {
     grid-column: 1 / -1;
   }
 
-  .calculator-form .form-wide {
-    grid-column: 1 / -1;
-  }
-
-  .estimate-details {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .site-footer {
     grid-template-columns: 1fr auto auto;
   }
@@ -1506,6 +1837,17 @@ h3 {
   }
 }
 
+@media (max-width: 560px) {
+  /* When the A4 letterhead wraps, stop right-aligning the contact block. */
+  .estimate-sheet {
+    padding: 16px;
+  }
+
+  .estimate-sheet-contacts {
+    text-align: left;
+  }
+}
+
 @media (max-width: 380px) {
   .site-header {
     width: min(var(--max), calc(100% - 16px));
@@ -1540,8 +1882,14 @@ h3 {
 }
 
 @media print {
+  @page {
+    size: A4;
+    margin: 16mm 15mm 14mm;
+  }
+
+  html,
   body {
-    background: oklch(99% 0.006 85);
+    background: #fff;
   }
 
   body * {
@@ -1553,16 +1901,45 @@ h3 {
     visibility: visible;
   }
 
-  .printable-estimate {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    border: 0;
-    box-shadow: none;
+  /* Show the letterhead / footer / disclaimer that are hidden on screen,
+     and hide the on-screen action buttons. */
+  .print-only {
+    display: block !important;
   }
 
-  .estimate-print-button {
-    display: none;
+  .screen-only {
+    display: none !important;
+  }
+
+  .printable-estimate {
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+    gap: 16px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    color: #1c1c1c;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Fixed point sizes keep the A4 sheet stable regardless of viewport width. */
+  .printable-estimate .estimate-sheet-eyebrow {
+    font-size: 13pt;
+  }
+
+  .printable-estimate .estimate-sheet-brand-text strong {
+    font-size: 13pt;
+  }
+
+  .printable-estimate .estimate-headline-value {
+    font-size: 22pt;
+  }
+
+  .printable-estimate .estimate-headline,
+  .printable-estimate .estimate-sheet-mark {
+    break-inside: avoid;
   }
 }

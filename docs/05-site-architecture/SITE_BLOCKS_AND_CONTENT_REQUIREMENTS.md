@@ -112,7 +112,7 @@ Required fields:
 
 MVP rule:
 
-The calculator gives a lead qualification signal and "предварительная оценка по площади и типу работ" only. It may show a preliminary range based on a temporary MVP rate table, but must not promise a final legal price before measurement.
+The calculator gives a lead qualification signal and "предварительная оценка по площади и типу работ" only. It shows a preliminary range based on VG Контур working rates, but must not promise a final legal price before measurement.
 
 Required disclaimer:
 
@@ -121,8 +121,8 @@ Required disclaimer:
 Pricing rule:
 
 - Do not show exact final prices as a promise.
-- Use conservative placeholder ranges until real rates are collected.
-- Mark the temporary rate table with `TODO: уточнить по Ставропольскому краю.`
+- Use VG Контур working rates for the preliminary estimate.
+- Rates are working rates for a preliminary estimate; the final estimate is formed after measurement.
 - Formula: area x rate range by repair type.
 
 Estimate output must include:
