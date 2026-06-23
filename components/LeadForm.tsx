@@ -2,10 +2,12 @@
 
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Download, Ruler, Send } from "lucide-react";
+import { ArrowRight, Download, Plus, Ruler, Send } from "lucide-react";
 import {
   CALCULATOR_DISCLAIMER,
   CALCULATOR_REPAIR_TYPES,
+  ESTIMATE_RESULT_DISCLAIMER,
+  ESTIMATE_RESULT_PITCH,
   OBJECT_STATES,
   calculateEstimate,
   formatDate,
@@ -43,8 +45,6 @@ const workTypes = [
   "Кладка",
   "Нужна консультация"
 ];
-
-const objectTypes = ["Квартира", "Дом", "Коммерческое помещение", "Санузел"];
 
 type SubmitState = {
   status: "idle" | "sending" | "success" | "error";
@@ -182,12 +182,13 @@ function CalculatorWidget() {
   const [repairType, setRepairType] = useState<string>("Комплексный ремонт");
   const [objectState, setObjectState] = useState<string>("Вторичка");
   const [area, setArea] = useState<string>("50");
-  const [objectType, setObjectType] = useState<string>("Квартира");
   const [city, setCity] = useState<string>("Ессентуки");
   const [now, setNow] = useState<string>("");
   // Форма отправки раскрывается только по клику — на экране сначала только
   // компактный результат, анкета не маячит до расчёта (важно для мобильной версии).
   const [showForm, setShowForm] = useState(false);
+  // Комментарий спрятан под ссылку — форма не раздувается по умолчанию.
+  const [showComment, setShowComment] = useState(false);
   const [submitState, setSubmitState] = useState<SubmitState>({ status: "idle", message: "" });
   const formRef = useRef<HTMLFormElement | null>(null);
 
@@ -197,6 +198,10 @@ function CalculatorWidget() {
   }, []);
 
   const isElectric = repairType === "Электрика";
+
+  // Тип объекта в форме больше не спрашиваем — он понятен из выбранного типа работ.
+  // Санузел → «Санузел», остальные ремонты и электрика → «Квартира» (безопасный default API).
+  const objectType = repairType === "Ванная / санузел / плитка" ? "Санузел" : "Квартира";
 
   const estimate = useMemo<EstimateResult | null>(
     () =>
@@ -311,177 +316,168 @@ function CalculatorWidget() {
   }
 
   return (
-    <div className="calc-widget">
-      <div className="calc-controls" role="group" aria-label="Параметры предварительной оценки">
-        <fieldset className="segmented">
-          <legend className="segmented-legend">Уровень работ</legend>
-          <div className="segmented-options">
-            {CALCULATOR_REPAIR_TYPES.map((item) => (
-              <label className="segmented-option" key={item}>
-                <input
-                  type="radio"
-                  name="calc-repair-type"
-                  value={item}
-                  checked={repairType === item}
-                  onChange={() => setRepairType(item)}
-                />
-                <span>{item}</span>
-              </label>
-            ))}
-          </div>
-        </fieldset>
+    <div className={`calc-widget${showForm ? " is-form-open" : ""}`}>
+      <div className="calc-col calc-col-params">
+        <p className="calc-col-title">Параметры расчёта</p>
+        <div className="calc-controls" role="group" aria-label="Параметры предварительной оценки">
+          <fieldset className="segmented">
+            <legend className="segmented-legend">Уровень работ</legend>
+            <div className="segmented-options">
+              {CALCULATOR_REPAIR_TYPES.map((item) => (
+                <label className="segmented-option" key={item}>
+                  <input
+                    type="radio"
+                    name="calc-repair-type"
+                    value={item}
+                    checked={repairType === item}
+                    onChange={() => setRepairType(item)}
+                  />
+                  <span>{item}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
 
-        <div className="calc-area">
-          <div className="calc-area-head">
-            <label htmlFor="calc-area-input">Площадь, м²</label>
+          <div className="calc-area">
+            <div className="calc-area-head">
+              <label htmlFor="calc-area-input">Площадь, м²</label>
+              <input
+                id="calc-area-input"
+                className="calc-area-input"
+                inputMode="decimal"
+                value={area}
+                onChange={(event) => setArea(event.target.value)}
+                aria-label="Площадь в квадратных метрах"
+              />
+            </div>
             <input
-              id="calc-area-input"
-              className="calc-area-input"
-              inputMode="decimal"
-              value={area}
+              className="calc-area-slider"
+              type="range"
+              min={AREA_MIN}
+              max={AREA_MAX}
+              step={1}
+              value={sliderValue}
               onChange={(event) => setArea(event.target.value)}
-              aria-label="Площадь в квадратных метрах"
+              aria-label="Площадь, ползунок"
+              disabled={isElectric}
             />
+            {isElectric ? (
+              <p className="calc-hint">Для электрики площадь не влияет на расчёт — считаем по объёму работ.</p>
+            ) : null}
           </div>
-          <input
-            className="calc-area-slider"
-            type="range"
-            min={AREA_MIN}
-            max={AREA_MAX}
-            step={1}
-            value={sliderValue}
-            onChange={(event) => setArea(event.target.value)}
-            aria-label="Площадь, ползунок"
-            disabled={isElectric}
-          />
-          {isElectric ? (
-            <p className="calc-hint">Для электрики площадь не влияет на расчёт — считаем по объёму работ.</p>
-          ) : null}
-        </div>
 
-        <fieldset className="segmented">
-          <legend className="segmented-legend">Состояние объекта</legend>
-          <div className="segmented-options segmented-options-3">
-            {OBJECT_STATES.map((item) => (
-              <label className="segmented-option" key={item}>
-                <input
-                  type="radio"
-                  name="calc-object-state"
-                  value={item}
-                  checked={objectState === item}
-                  onChange={() => setObjectState(item)}
-                />
-                <span>{item}</span>
-              </label>
-            ))}
-          </div>
-        </fieldset>
+          <fieldset className="segmented">
+            <legend className="segmented-legend">Состояние объекта</legend>
+            <div className="segmented-options segmented-options-3">
+              {OBJECT_STATES.map((item) => (
+                <label className="segmented-option" key={item}>
+                  <input
+                    type="radio"
+                    name="calc-object-state"
+                    value={item}
+                    checked={objectState === item}
+                    onChange={() => setObjectState(item)}
+                  />
+                  <span>{item}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        </div>
       </div>
 
-      {/* Компактная карточка результата на экране — без полноразмерного A4-листа. */}
-      {estimate ? (
-        <div className="calc-result">
-          <div className="calc-result-headline">
-            <span className="calc-result-label">Ориентир по работам</span>
-            <strong className="calc-result-value">{formatEstimateFromTo(estimate)}</strong>
-            {resultMeta ? <span className="calc-result-meta">{resultMeta}</span> : null}
-          </div>
-
-          <p className="calc-result-note">
-            <Ruler size={17} aria-hidden="true" />
-            <span>Для точной сметы нужен замер — выезд по Ессентукам и КМВ бесплатный.</span>
-          </p>
-
-          {/* Дисклеймер на экране показываем один раз — ненавязчиво, под результатом. */}
-          <p className="calc-result-disclaimer">{CALCULATOR_DISCLAIMER}</p>
-
-          {!showForm ? (
-            <div className="calc-result-actions">
-              <button className="button button-primary" type="button" onClick={() => setShowForm(true)}>
-                <span>Отправить расчёт в VG Контур</span>
-                <ArrowRight size={18} aria-hidden="true" />
-              </button>
-              <button className="button button-secondary" type="button" onClick={handlePrintEstimate}>
-                <Download size={18} aria-hidden="true" />
-                <span>Скачать предварительную смету</span>
-              </button>
-              <a className="calc-result-link" href="#lead-form">
-                <Ruler size={16} aria-hidden="true" />
-                <span>Вызвать замерщика</span>
-              </a>
+      <div className="calc-col calc-col-output">
+        <p className="calc-col-title">Ваш ориентир</p>
+        {estimate ? (
+          <div className="calc-result">
+            <div className="calc-result-headline">
+              <strong className="calc-result-value">{formatEstimateFromTo(estimate)}</strong>
+              {resultMeta ? <span className="calc-result-meta">{resultMeta}</span> : null}
             </div>
-          ) : (
-            <form className="lead-form calc-send" ref={formRef} onSubmit={handleSubmit} noValidate>
-              <input className="form-hp" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" />
 
-              <p className="calc-send-lead">
-                Перезвоним, уточним детали и согласуем бесплатный замер — расчёт уже прикреплён к заявке.
-              </p>
+            <p className="calc-result-pitch">{ESTIMATE_RESULT_PITCH}</p>
 
-              <div className="calc-send-grid">
-                <label>
-                  <span>Имя</span>
-                  <input name="name" autoComplete="name" placeholder="Иван" required />
-                </label>
-                <label>
-                  <span>Контактный телефон</span>
-                  <input name="contact" autoComplete="tel" inputMode="tel" placeholder="+7 ___ ___-__-__" required />
-                </label>
-                <label>
-                  <span>Тип объекта</span>
-                  <select
-                    name="objectType"
-                    value={objectType}
-                    onChange={(event) => setObjectType(event.target.value)}
-                    required
-                  >
-                    {objectTypes.map((item) => (
-                      <option key={item} value={item}>
-                        {item}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label>
-                  <span>Город</span>
-                  <select name="city" value={city} onChange={(event) => setCity(event.target.value)} required>
-                    {cities.map((item) => (
-                      <option key={item} value={item}>
-                        {item}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-              <label className="form-wide">
-                <span>Комментарий</span>
-                <textarea name="comment" rows={3} placeholder="Коротко опишите объект, сроки или важные детали" />
-              </label>
+            {/* Дисклеймер на экране показываем один раз — ненавязчиво, под результатом. */}
+            <p className="calc-result-disclaimer">{ESTIMATE_RESULT_DISCLAIMER}</p>
 
-              <div className="form-actions">
-                <button className="button button-primary" type="submit" disabled={submitState.status === "sending"}>
-                  <span>{submitState.status === "sending" ? "Отправляем..." : "Отправить расчёт в VG Контур"}</span>
+            {!showForm ? (
+              <div className="calc-result-actions">
+                <button className="button button-primary" type="button" onClick={() => setShowForm(true)}>
+                  <span>Отправить расчёт в VG Контур</span>
                   <ArrowRight size={18} aria-hidden="true" />
                 </button>
                 <button className="button button-secondary" type="button" onClick={handlePrintEstimate}>
                   <Download size={18} aria-hidden="true" />
                   <span>Скачать предварительную смету</span>
                 </button>
-                <p className="form-consent">
-                  Нажимая кнопку, вы соглашаетесь с обработкой персональных данных и{" "}
-                  <Link href="/privacy">Политикой конфиденциальности</Link>.
-                </p>
               </div>
+            ) : null}
+          </div>
+        ) : (
+          <p className="calc-empty">Укажите площадь и тип работ, чтобы увидеть предварительный ориентир.</p>
+        )}
+      </div>
 
-              <p className={`form-status ${submitState.status === "error" ? "is-error" : ""}`} aria-live="polite">
-                {submitState.message}
+      {/* Форма раскрывается на всю ширину под колонками — параметры и ориентир остаются выровненными. */}
+      {estimate && showForm ? (
+        <div className="calc-form-region">
+          <form className="lead-form calc-send" ref={formRef} onSubmit={handleSubmit} noValidate>
+            <input className="form-hp" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" />
+
+            <div className="calc-send-grid">
+              <label>
+                <span>Имя</span>
+                <input name="name" autoComplete="name" placeholder="Иван" required />
+              </label>
+              <label>
+                <span>Телефон</span>
+                <input name="contact" autoComplete="tel" inputMode="tel" placeholder="+7 ___ ___-__-__" required />
+              </label>
+            </div>
+            <label>
+              <span>Город</span>
+              <select name="city" value={city} onChange={(event) => setCity(event.target.value)} required>
+                {cities.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            {!showComment ? (
+              <button type="button" className="calc-comment-toggle" onClick={() => setShowComment(true)}>
+                <Plus size={15} aria-hidden="true" />
+                <span>Добавить комментарий</span>
+              </button>
+            ) : (
+              <label>
+                <span>Комментарий к объекту, если нужно</span>
+                <textarea name="comment" rows={2} placeholder="Например: сроки, особенности объекта, что важно учесть" />
+              </label>
+            )}
+
+            <div className="form-actions">
+              <button className="button button-primary" type="submit" disabled={submitState.status === "sending"}>
+                <span>{submitState.status === "sending" ? "Отправляем..." : "Отправить расчёт в VG Контур"}</span>
+                <ArrowRight size={18} aria-hidden="true" />
+              </button>
+              <button className="button button-secondary" type="button" onClick={handlePrintEstimate}>
+                <Download size={18} aria-hidden="true" />
+                <span>Скачать смету</span>
+              </button>
+              <p className="form-consent">
+                Нажимая кнопку, вы соглашаетесь с обработкой персональных данных и{" "}
+                <Link href="/privacy">Политикой конфиденциальности</Link>.
               </p>
-            </form>
-          )}
+            </div>
+
+            <p className={`form-status ${submitState.status === "error" ? "is-error" : ""}`} aria-live="polite">
+              {submitState.message}
+            </p>
+          </form>
         </div>
-      ) : (
-        <p className="calc-empty">Укажите площадь и тип работ, чтобы увидеть предварительный ориентир.</p>
-      )}
+      ) : null}
 
       {/* Печатная A4-смета: скрыта на экране, рендерится только при печати / «Скачать смету». */}
       {estimate ? (
@@ -525,10 +521,6 @@ function CalculatorWidget() {
             <div>
               <dt>Тип работ</dt>
               <dd>{repairType}</dd>
-            </div>
-            <div>
-              <dt>Тип объекта</dt>
-              <dd>{objectType}</dd>
             </div>
             {!isElectric ? (
               <div>

@@ -405,7 +405,6 @@ h3 {
 .service-card p,
 .trust-item p,
 .process p,
-.calculator-copy p,
 .lead-panel-copy p,
 .contacts-card p,
 .privacy-page p {
@@ -522,31 +521,20 @@ h3 {
   padding-left: 18px;
 }
 
-.calculator-copy {
-  align-self: center;
-}
-
-.calculator-theses {
-  display: grid;
-  gap: 12px;
-  margin: 22px 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.calculator-theses li {
+/* Колонки калькулятора: слева «Параметры расчёта», справа «Ваш ориентир». */
+.calc-col {
   display: flex;
-  gap: 11px;
-  align-items: flex-start;
-  color: var(--muted);
-  font-size: var(--fs-caption);
-  line-height: 1.45;
+  flex-direction: column;
+  min-width: 0;
 }
 
-.calculator-theses svg {
-  flex: 0 0 auto;
-  margin-top: 2px;
-  color: var(--green);
+.calc-col-title {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: var(--fs-label);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .lead-section {
@@ -1006,7 +994,8 @@ h3 {
 
 /* ───────── Компактная карточка результата + отправка расчёта ───────── */
 .calc-result {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 14px;
   padding: 18px;
   border: 1px solid oklch(75% 0.035 145);
@@ -1017,14 +1006,6 @@ h3 {
 .calc-result-headline {
   display: grid;
   gap: 4px;
-}
-
-.calc-result-label {
-  color: var(--green-strong);
-  font-size: var(--fs-label);
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 
 .calc-result-value {
@@ -1041,22 +1022,12 @@ h3 {
   opacity: 0.92;
 }
 
-.calc-result-note {
-  display: flex;
-  gap: 9px;
-  align-items: flex-start;
+.calc-result-pitch {
   margin: 0;
-  padding: 12px 14px;
-  border-radius: var(--radius);
-  background: var(--bg-plain);
-  color: var(--text);
+  color: var(--green-strong);
+  font-size: var(--fs-caption);
   font-weight: 700;
-}
-
-.calc-result-note svg {
-  flex: 0 0 auto;
-  margin-top: 2px;
-  color: var(--green);
+  line-height: 1.5;
 }
 
 .calc-result-disclaimer {
@@ -1069,21 +1040,12 @@ h3 {
 .calc-result-actions {
   display: grid;
   gap: 10px;
+  /* Когда карточка растянута до высоты левой колонки — прижимаем CTA к низу. */
+  margin-top: auto;
 }
 
 .calc-result-actions .button {
   width: 100%;
-}
-
-.calc-result-link {
-  display: inline-flex;
-  gap: 7px;
-  align-items: center;
-  justify-content: center;
-  color: var(--blue);
-  font-size: var(--fs-caption);
-  font-weight: 700;
-  text-decoration: underline;
 }
 
 .calc-empty {
@@ -1102,10 +1064,9 @@ h3 {
   gap: 12px;
 }
 
-.calc-send-lead {
-  margin: 0;
-  color: var(--muted);
-  font-size: var(--fs-caption);
+/* Калькуляторная форма остаётся одноколоночной (не наследует 2 колонки .lead-form). */
+.lead-form.calc-send {
+  grid-template-columns: 1fr;
 }
 
 .calc-send-grid {
@@ -1116,6 +1077,37 @@ h3 {
 
 .calc-send-grid > label {
   min-width: 0;
+}
+
+.calc-comment-toggle {
+  justify-self: start;
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 2px 0;
+  border: 0;
+  background: transparent;
+  color: var(--blue);
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.calc-comment-toggle svg {
+  flex: 0 0 auto;
+}
+
+/* Форма отправки расчёта — отдельная полоса под колонками, со своим разделителем. */
+.calc-form-region {
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+}
+
+.calc-form-region .calc-send {
+  max-width: 480px;
+  margin-right: auto;
+  margin-left: auto;
 }
 
 .works {
@@ -1750,11 +1742,38 @@ h3 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
-  .calculator,
   .lead-section {
     grid-template-columns: 0.92fr 1.08fr;
     gap: 34px;
     padding: 34px;
+  }
+
+  /* Калькулятор: компактное intro сверху, ниже две связанные колонки (параметры | ориентир). */
+  .calculator {
+    gap: 26px;
+    padding: 34px;
+  }
+
+  .calc-widget {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    gap: 24px;
+    align-items: stretch;
+  }
+
+  /* Закрытое состояние: карточки выровнены по высоте — правая «Ваш ориентир» тянется до левой. */
+  .calc-col > .calc-controls,
+  .calc-col > .calc-result,
+  .calc-col > .calc-empty {
+    flex: 1;
+  }
+
+  /* Раскрытая форма: колонки естественной высоты, форма уходит вниз на всю ширину. */
+  .calc-widget.is-form-open {
+    align-items: start;
+  }
+
+  .calc-form-region {
+    grid-column: 1 / -1;
   }
 
   .contacts {
@@ -1797,11 +1816,6 @@ h3 {
 
   /* Hide the extended desktop-only copy tails. */
   .dt-only {
-    display: none;
-  }
-
-  /* Theses are a desktop two-column intro; mobile goes straight to the calculator. */
-  .calculator-theses {
     display: none;
   }
 
@@ -1947,21 +1961,30 @@ h3 {
     background: #fff;
   }
 
-  body * {
-    visibility: hidden;
+  /* Печатаем ТОЛЬКО A4-смету: всё остальное убираем из потока (display:none),
+     иначе невидимый, но занимающий место контент плодит пустые страницы. */
+  body > *:not(main),
+  main > *:not(#calculator),
+  #calculator > *:not(.calc-widget),
+  .calc-widget > *:not(.printable-estimate) {
+    display: none !important;
   }
 
-  .printable-estimate,
-  .printable-estimate * {
-    visibility: visible;
+  #calculator,
+  .calc-widget {
+    display: block !important;
+    width: auto !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: none !important;
+    box-shadow: none !important;
   }
 
-  /* На печати показываем A4-лист (на экране он скрыт класс-парой выше). */
+  /* A4-лист (на экране он скрыт класс-парой .estimate-sheet.printable-estimate). */
   .estimate-sheet.printable-estimate {
     display: grid;
-    position: absolute;
-    inset: 0 auto auto 0;
-    width: 100%;
     gap: 16px;
     padding: 0;
     border: 0;

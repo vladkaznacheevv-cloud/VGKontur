@@ -374,26 +374,10 @@ export default function HomePage() {
       </section>
 
       <section className="calculator section-shell" id="calculator">
-        <div className="calculator-copy">
+        <div className="section-heading">
           <p className="eyebrow">Предварительная оценка</p>
-          <h2>Узнайте предварительную стоимость ремонта</h2>
-          <p>
-            Прикиньте бюджет по площади и типу работ за минуту — это ориентир, а не точная цена.
-          </p>
-          <ul className="calculator-theses" aria-label="Как считаем">
-            <li>
-              <ClipboardCheck size={18} aria-hidden="true" />
-              <span>Считаем по площади и типу работ — без «средней цены с потолка».</span>
-            </li>
-            <li>
-              <Ruler size={18} aria-hidden="true" />
-              <span>Показываем реалистичный порядок бюджета по работам.</span>
-            </li>
-            <li>
-              <Handshake size={18} aria-hidden="true" />
-              <span>Точную смету фиксируем после бесплатного замера.</span>
-            </li>
-          </ul>
+          <h2>Узнайте порядок бюджета за минуту</h2>
+          <p>Расчёт покажет ориентир по работам. Точную смету закрепим после бесплатного замера.</p>
         </div>
         <LeadForm variant="calculator" />
       </section>
