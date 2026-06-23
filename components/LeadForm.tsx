@@ -1,8 +1,8 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Download, Phone, Ruler, Send } from "lucide-react";
+import { ArrowRight, Download, Ruler, Send } from "lucide-react";
 import {
   CALCULATOR_DISCLAIMER,
   CALCULATOR_REPAIR_TYPES,
@@ -185,7 +185,11 @@ function CalculatorWidget() {
   const [objectType, setObjectType] = useState<string>("Квартира");
   const [city, setCity] = useState<string>("Ессентуки");
   const [now, setNow] = useState<string>("");
+  // Форма отправки раскрывается только по клику — на экране сначала только
+  // компактный результат, анкета не маячит до расчёта (важно для мобильной версии).
+  const [showForm, setShowForm] = useState(false);
   const [submitState, setSubmitState] = useState<SubmitState>({ status: "idle", message: "" });
+  const formRef = useRef<HTMLFormElement | null>(null);
 
   // Дата формирования сметы вычисляется на клиенте, чтобы избежать рассинхрона гидратации.
   useEffect(() => {
@@ -211,6 +215,18 @@ function CalculatorWidget() {
     return Math.min(AREA_MAX, Math.max(AREA_MIN, Math.round(parsed)));
   }, [area]);
 
+  // Короткая строка-мета под суммой: «Комплексный ремонт · 50 м² · Вторичка».
+  const resultMeta = estimate
+    ? [repairType, !isElectric ? `${estimate.area} м²` : "", objectState].filter(Boolean).join(" · ")
+    : "";
+
+  // После раскрытия подводим форму в зону видимости, чтобы клик вёл к одной заявке.
+  useEffect(() => {
+    if (showForm && formRef.current) {
+      formRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  }, [showForm]);
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -231,8 +247,10 @@ function CalculatorWidget() {
 
     setSubmitState({ status: "sending", message: "Отправляем расчёт..." });
 
-    // Состояние объекта и ориентир по работам передаём команде в комментарии —
-    // без изменения контракта API, Telegram и хранилища заявок.
+    // Единый источник цифр: ориентир по работам берём из того же расчёта
+    // lib/estimate.ts, который видит клиент, и передаём команде в комментарии —
+    // без изменения контракта API. Telegram сумму не пересчитывает, поэтому
+    // в заявке и на экране диапазон всегда один и тот же.
     const enrichedComment = [
       objectState ? `Состояние объекта: ${objectState}.` : "",
       `Ориентир по работам: ${formatEstimateFromTo(estimate)} (${repairType}, ${estimate.area} м²).`,
@@ -360,8 +378,114 @@ function CalculatorWidget() {
         </fieldset>
       </div>
 
+      {/* Компактная карточка результата на экране — без полноразмерного A4-листа. */}
       {estimate ? (
-        <section className="estimate-sheet printable-estimate" aria-label="Предварительная оценка стоимости работ">
+        <div className="calc-result">
+          <div className="calc-result-headline">
+            <span className="calc-result-label">Ориентир по работам</span>
+            <strong className="calc-result-value">{formatEstimateFromTo(estimate)}</strong>
+            {resultMeta ? <span className="calc-result-meta">{resultMeta}</span> : null}
+          </div>
+
+          <p className="calc-result-note">
+            <Ruler size={17} aria-hidden="true" />
+            <span>Для точной сметы нужен замер — выезд по Ессентукам и КМВ бесплатный.</span>
+          </p>
+
+          {/* Дисклеймер на экране показываем один раз — ненавязчиво, под результатом. */}
+          <p className="calc-result-disclaimer">{CALCULATOR_DISCLAIMER}</p>
+
+          {!showForm ? (
+            <div className="calc-result-actions">
+              <button className="button button-primary" type="button" onClick={() => setShowForm(true)}>
+                <span>Отправить расчёт в VG Контур</span>
+                <ArrowRight size={18} aria-hidden="true" />
+              </button>
+              <button className="button button-secondary" type="button" onClick={handlePrintEstimate}>
+                <Download size={18} aria-hidden="true" />
+                <span>Скачать предварительную смету</span>
+              </button>
+              <a className="calc-result-link" href="#lead-form">
+                <Ruler size={16} aria-hidden="true" />
+                <span>Вызвать замерщика</span>
+              </a>
+            </div>
+          ) : (
+            <form className="lead-form calc-send" ref={formRef} onSubmit={handleSubmit} noValidate>
+              <input className="form-hp" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" />
+
+              <p className="calc-send-lead">
+                Перезвоним, уточним детали и согласуем бесплатный замер — расчёт уже прикреплён к заявке.
+              </p>
+
+              <div className="calc-send-grid">
+                <label>
+                  <span>Имя</span>
+                  <input name="name" autoComplete="name" placeholder="Иван" required />
+                </label>
+                <label>
+                  <span>Контактный телефон</span>
+                  <input name="contact" autoComplete="tel" inputMode="tel" placeholder="+7 ___ ___-__-__" required />
+                </label>
+                <label>
+                  <span>Тип объекта</span>
+                  <select
+                    name="objectType"
+                    value={objectType}
+                    onChange={(event) => setObjectType(event.target.value)}
+                    required
+                  >
+                    {objectTypes.map((item) => (
+                      <option key={item} value={item}>
+                        {item}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  <span>Город</span>
+                  <select name="city" value={city} onChange={(event) => setCity(event.target.value)} required>
+                    {cities.map((item) => (
+                      <option key={item} value={item}>
+                        {item}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              <label className="form-wide">
+                <span>Комментарий</span>
+                <textarea name="comment" rows={3} placeholder="Коротко опишите объект, сроки или важные детали" />
+              </label>
+
+              <div className="form-actions">
+                <button className="button button-primary" type="submit" disabled={submitState.status === "sending"}>
+                  <span>{submitState.status === "sending" ? "Отправляем..." : "Отправить расчёт в VG Контур"}</span>
+                  <ArrowRight size={18} aria-hidden="true" />
+                </button>
+                <button className="button button-secondary" type="button" onClick={handlePrintEstimate}>
+                  <Download size={18} aria-hidden="true" />
+                  <span>Скачать предварительную смету</span>
+                </button>
+                <p className="form-consent">
+                  Нажимая кнопку, вы соглашаетесь с обработкой персональных данных и{" "}
+                  <Link href="/privacy">Политикой конфиденциальности</Link>.
+                </p>
+              </div>
+
+              <p className={`form-status ${submitState.status === "error" ? "is-error" : ""}`} aria-live="polite">
+                {submitState.message}
+              </p>
+            </form>
+          )}
+        </div>
+      ) : (
+        <p className="calc-empty">Укажите площадь и тип работ, чтобы увидеть предварительный ориентир.</p>
+      )}
+
+      {/* Печатная A4-смета: скрыта на экране, рендерится только при печати / «Скачать смету». */}
+      {estimate ? (
+        <section className="estimate-sheet printable-estimate" aria-hidden="true">
           <header className="estimate-sheet-head">
             <div className="estimate-sheet-brand">
               <span className="estimate-sheet-mark" aria-hidden="true">
@@ -432,102 +556,20 @@ function CalculatorWidget() {
 
           <p className="estimate-cta-note">
             <Ruler size={17} aria-hidden="true" />
-            <span>Для точной сметы нужен замер объекта — выезд по Ессентукам и КМВ бесплатный.</span>
+            <span>Для точной сметы нужен замер объекта.</span>
           </p>
 
-          {/* Дисклеймер показываем один раз — в печатной/PDF-смете. */}
-          <p className="estimate-sheet-disclaimer print-only">{CALCULATOR_DISCLAIMER}</p>
+          {/* Дисклеймер в печатной смете — один раз. */}
+          <p className="estimate-sheet-disclaimer">{CALCULATOR_DISCLAIMER}</p>
 
-          <footer className="estimate-sheet-foot print-only">
+          <footer className="estimate-sheet-foot">
             <span>
               {PROJECT_NAME} · {SITE_URL.replace("https://", "")} · {PHONE_DISPLAY}
             </span>
             <span>WhatsApp {WHATSAPP_URL.replace("https://", "")} · Telegram {TELEGRAM_URL.replace("https://", "")}</span>
           </footer>
-
-          <div className="estimate-actions screen-only">
-            <button className="button button-secondary" type="button" onClick={handlePrintEstimate}>
-              <Download size={18} aria-hidden="true" />
-              <span>Скачать предварительную смету</span>
-            </button>
-            <a className="button button-ghost" href="#lead-form">
-              <Ruler size={18} aria-hidden="true" />
-              <span>Вызвать замерщика</span>
-            </a>
-          </div>
         </section>
       ) : null}
-
-      <div className="calc-next screen-only">
-        <p className="calc-next-title">Что дальше после расчёта</p>
-        <ul className="calc-next-list">
-          <li>Бесплатный замер в удобное время — инженер осмотрит объект.</li>
-          <li>Точная смета после осмотра: материалы, скрытые работы и объём.</li>
-          <li>Фиксируем состав работ и цену до старта — без доплат «по ходу».</li>
-        </ul>
-      </div>
-
-      <form className="lead-form calc-send" onSubmit={handleSubmit} noValidate>
-        <input className="form-hp" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" />
-
-        <p className="calc-send-lead screen-only">
-          Отправьте расчёт в VG Контур — перезвоним, уточним детали и согласуем бесплатный замер.
-        </p>
-
-        <label>
-          <span>Имя</span>
-          <input name="name" autoComplete="name" placeholder="Иван" required />
-        </label>
-        <label>
-          <span>Контактный телефон</span>
-          <input name="contact" autoComplete="tel" inputMode="tel" placeholder="+7 ___ ___-__-__" required />
-        </label>
-        <label>
-          <span>Тип объекта</span>
-          <select name="objectType" value={objectType} onChange={(event) => setObjectType(event.target.value)} required>
-            {objectTypes.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          <span>Город</span>
-          <select name="city" value={city} onChange={(event) => setCity(event.target.value)} required>
-            {cities.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="form-wide">
-          <span>Комментарий</span>
-          <textarea name="comment" rows={3} placeholder="Коротко опишите объект, сроки или важные детали" />
-        </label>
-
-        <div className="form-actions">
-          <button className="button button-primary" type="submit" disabled={submitState.status === "sending"}>
-            <span>{submitState.status === "sending" ? "Отправляем..." : "Отправить расчёт в VG Контур"}</span>
-            <ArrowRight size={18} aria-hidden="true" />
-          </button>
-          <div className="calc-send-secondary">
-            <a className="calc-call-link" href={`tel:${PHONE_TEL}`}>
-              <Phone size={16} aria-hidden="true" />
-              <span>Получить точную смету после замера</span>
-            </a>
-          </div>
-          <p className="form-consent">
-            Нажимая кнопку, вы соглашаетесь с обработкой персональных данных и{" "}
-            <Link href="/privacy">Политикой конфиденциальности</Link>.
-          </p>
-        </div>
-
-        <p className={`form-status ${submitState.status === "error" ? "is-error" : ""}`} aria-live="polite">
-          {submitState.message}
-        </p>
-      </form>
     </div>
   );
 }

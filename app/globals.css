@@ -104,7 +104,6 @@ button {
 .button,
 .hero-bullets li,
 .service-card-top,
-.estimate-note,
 .contact-links a,
 .back-link {
   display: inline-flex;
@@ -322,7 +321,6 @@ h3 {
 .hero-visual img,
 .service-image img,
 .trust-image img,
-.calculator-image img,
 .map-panel-image {
   display: block;
   width: 100%;
@@ -528,30 +526,27 @@ h3 {
   align-self: center;
 }
 
-.calculator-image {
-  aspect-ratio: 4 / 3;
-  margin-top: 18px;
-  overflow: hidden;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--bg-plain);
-}
-
-.estimate-note {
+.calculator-theses {
+  display: grid;
   gap: 12px;
-  align-items: flex-start;
-  margin-top: 22px;
-  padding: 14px;
-  border: 1px solid oklch(75% 0.035 145);
-  border-radius: var(--radius);
-  background: var(--surface-green);
-  color: var(--green-strong);
-  font-weight: 700;
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
 }
 
-.estimate-note svg {
+.calculator-theses li {
+  display: flex;
+  gap: 11px;
+  align-items: flex-start;
+  color: var(--muted);
+  font-size: var(--fs-caption);
+  line-height: 1.45;
+}
+
+.calculator-theses svg {
   flex: 0 0 auto;
   margin-top: 2px;
+  color: var(--green);
 }
 
 .lead-section {
@@ -669,11 +664,6 @@ h3 {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--bg-plain);
-}
-
-/* Visually hidden helpers shared by screen/print variants. */
-.print-only {
-  display: none;
 }
 
 .segmented {
@@ -813,6 +803,11 @@ h3 {
   background: oklch(99% 0.006 85);
   padding: 22px;
   box-shadow: 0 14px 36px oklch(26% 0.03 70 / 9%);
+}
+
+/* На экране печатная A4-смета скрыта — она нужна только при печати / «Скачать смету». */
+.estimate-sheet.printable-estimate {
+  display: none;
 }
 
 .estimate-sheet-head {
@@ -1009,70 +1004,118 @@ h3 {
   overflow-wrap: anywhere;
 }
 
-.estimate-actions {
+/* ───────── Компактная карточка результата + отправка расчёта ───────── */
+.calc-result {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid oklch(75% 0.035 145);
+  border-radius: var(--radius);
+  background: var(--surface-green);
+}
+
+.calc-result-headline {
+  display: grid;
+  gap: 4px;
+}
+
+.calc-result-label {
+  color: var(--green-strong);
+  font-size: var(--fs-label);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.calc-result-value {
+  color: var(--green-strong);
+  font-size: clamp(1.45rem, 1.05rem + 1.6vw, 1.95rem);
+  font-weight: 850;
+  line-height: 1.12;
+}
+
+.calc-result-meta {
+  color: var(--green-strong);
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  opacity: 0.92;
+}
+
+.calc-result-note {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  background: var(--bg-plain);
+  color: var(--text);
+  font-weight: 700;
+}
+
+.calc-result-note svg {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  color: var(--green);
+}
+
+.calc-result-disclaimer {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--fs-label);
+  line-height: 1.5;
+}
+
+.calc-result-actions {
   display: grid;
   gap: 10px;
 }
 
-.estimate-actions .button {
+.calc-result-actions .button {
   width: 100%;
 }
 
-.button-ghost {
-  border: 1px solid var(--line);
-  background: transparent;
-  color: var(--text);
-}
-
-.button-ghost:hover {
-  border-color: var(--green);
-  color: var(--green-strong);
-}
-
-/* ───────── Продающий блок + отправка расчёта ───────── */
-.calc-next {
-  display: grid;
-  gap: 10px;
-  padding: 16px 18px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--bg-plain);
-}
-
-.calc-next-title {
-  margin: 0;
-  font-weight: 800;
-}
-
-.calc-next-list {
-  display: grid;
-  gap: 8px;
-  margin: 0;
-  padding-left: 18px;
-  color: var(--muted);
-  font-size: var(--fs-caption);
-  line-height: 1.45;
-}
-
-.calc-send-lead {
-  margin: 0 0 2px;
-  color: var(--muted);
-  font-size: var(--fs-caption);
-}
-
-.calc-send-secondary {
-  display: flex;
-  justify-content: center;
-}
-
-.calc-call-link {
+.calc-result-link {
   display: inline-flex;
   gap: 7px;
   align-items: center;
+  justify-content: center;
   color: var(--blue);
   font-size: var(--fs-caption);
   font-weight: 700;
   text-decoration: underline;
+}
+
+.calc-empty {
+  margin: 0;
+  padding: 18px;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-plain);
+  color: var(--muted);
+  font-size: var(--fs-caption);
+  text-align: center;
+}
+
+/* Компактная форма отправки расчёта внутри карточки результата. */
+.calc-send {
+  gap: 12px;
+}
+
+.calc-send-lead {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--fs-caption);
+}
+
+.calc-send-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.calc-send-grid > label {
+  min-width: 0;
 }
 
 .works {
@@ -1757,6 +1800,11 @@ h3 {
     display: none;
   }
 
+  /* Theses are a desktop two-column intro; mobile goes straight to the calculator. */
+  .calculator-theses {
+    display: none;
+  }
+
   /* Denser process steps: 8 items in two compact columns instead of a long list. */
   .process-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1783,11 +1831,6 @@ h3 {
     gap: 10px;
   }
 
-  /* Decorative calculator image adds length without info on mobile. */
-  .calculator-image {
-    display: none;
-  }
-
   /* Show the compact bottom CTA bar and reserve space so it never covers the footer.
      Scoped to pages that actually render the bar (home), so /privacy keeps no dead space. */
   .mobile-cta-bar {
@@ -1807,6 +1850,18 @@ h3 {
   .button {
     padding-right: 14px;
     padding-left: 14px;
+  }
+
+  /* Узкие три колонки состояния: уменьшаем подписи, чтобы слова не рвались по буквам. */
+  .segmented-options-3 {
+    gap: 6px;
+  }
+
+  .segmented-options-3 .segmented-option span {
+    padding-right: 4px;
+    padding-left: 4px;
+    font-size: 0.72rem;
+    letter-spacing: -0.01em;
   }
 
   .service-area,
@@ -1901,17 +1956,9 @@ h3 {
     visibility: visible;
   }
 
-  /* Show the letterhead / footer / disclaimer that are hidden on screen,
-     and hide the on-screen action buttons. */
-  .print-only {
-    display: block !important;
-  }
-
-  .screen-only {
-    display: none !important;
-  }
-
-  .printable-estimate {
+  /* На печати показываем A4-лист (на экране он скрыт класс-парой выше). */
+  .estimate-sheet.printable-estimate {
+    display: grid;
     position: absolute;
     inset: 0 auto auto 0;
     width: 100%;

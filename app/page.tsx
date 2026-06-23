@@ -24,7 +24,6 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import calculatorImage from "@/assets/optimized/calculator-estimate-v01.webp";
 import heroImage from "@/assets/optimized/hero-renovation-essentuki-v01.webp";
 import processQualityImage from "@/assets/optimized/process-quality-control-v01.webp";
 import serviceApartmentImage from "@/assets/optimized/service-apartment-renovation-v01.webp";
@@ -379,25 +378,22 @@ export default function HomePage() {
           <p className="eyebrow">Предварительная оценка</p>
           <h2>Узнайте предварительную стоимость ремонта</h2>
           <p>
-            Прикиньте бюджет по площади и типу работ за минуту.
-            <span className="dt-only"> Это предварительный расчёт, а не точная цена — итоговую смету составим после замера.</span>
+            Прикиньте бюджет по площади и типу работ за минуту — это ориентир, а не точная цена.
           </p>
-          <div className="estimate-note">
-            <ClipboardCheck size={22} aria-hidden="true" />
-            <span>
-              Расчёт предварительный и показывает ориентир по стоимости работ. Материалы,
-              сантехника, электрика, демонтаж, состояние стен и пола уточняются после замера.
-            </span>
-          </div>
-          <div className="calculator-image" aria-hidden="true">
-            <Image
-              src={calculatorImage}
-              alt=""
-              width={calculatorImage.width}
-              height={calculatorImage.height}
-              sizes="(min-width: 980px) 40vw, 100vw"
-            />
-          </div>
+          <ul className="calculator-theses" aria-label="Как считаем">
+            <li>
+              <ClipboardCheck size={18} aria-hidden="true" />
+              <span>Считаем по площади и типу работ — без «средней цены с потолка».</span>
+            </li>
+            <li>
+              <Ruler size={18} aria-hidden="true" />
+              <span>Показываем реалистичный порядок бюджета по работам.</span>
+            </li>
+            <li>
+              <Handshake size={18} aria-hidden="true" />
+              <span>Точную смету фиксируем после бесплатного замера.</span>
+            </li>
+          </ul>
         </div>
         <LeadForm variant="calculator" />
       </section>
