@@ -12,8 +12,17 @@ export const metadata: Metadata = {
   title: siteTitle,
   description: siteDescription,
   applicationName: PROJECT_NAME,
+  manifest: "/site.webmanifest",
   alternates: {
     canonical: "/"
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "16x16 32x32 48x48", type: "image/x-icon" },
+      { url: "/favicon.svg", type: "image/svg+xml" }
+    ],
+    shortcut: "/favicon.ico",
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }]
   },
   robots: {
     index: true,
